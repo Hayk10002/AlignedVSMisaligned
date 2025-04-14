@@ -22,3 +22,16 @@ add_test(NAME MainTest7 COMMAND main 1000000)
 add_test(NAME MainTest8 COMMAND main 10000000)
 add_test(NAME MainTest9 COMMAND main 75000000)
 add_test(NAME MainTest10 COMMAND main 300000000)
+
+
+# Disable the test at configure-time for single-config generators
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_CONFIGURATION_TYPES)
+    set_tests_properties(MainTest8 PROPERTIES DISABLED TRUE)
+    set_tests_properties(MainTest9 PROPERTIES DISABLED TRUE)
+    set_tests_properties(MainTest10 PROPERTIES DISABLED TRUE)
+endif()
+
+# Additionally disable it at runtime for multi-config generators
+set_tests_properties(MainTest8 PROPERTIES DISABLED $<CONFIG:Debug>)
+set_tests_properties(MainTest9 PROPERTIES DISABLED $<CONFIG:Debug>)
+set_tests_properties(MainTest10 PROPERTIES DISABLED $<CONFIG:Debug>)
