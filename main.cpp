@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <numeric>
 #include <format>
+#include <string>
 
 #if defined(__AVX__)
 #include <immintrin.h>
@@ -75,13 +76,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    size_t N = std::atoi(argv[1]);
+    size_t N = std::stoi(argv[1]);
     if (N % 8 != 0) {
         std::cerr << "Vector size must be a multiple of 8.\n";
         return 1;
     }
 
-    std::cout << "Running with vector size: " << N << "\n";
+    std::cout << "Running with vector size: " << N << std::endl;
 
     // Allocate raw memory with padding for alignment + misalignment
     size_t total_bytes = N * sizeof(float) + 64;
