@@ -57,9 +57,11 @@ std::chrono::milliseconds time(F func, Args&&... args) {
 
 void test(const float* data, const int N, float* a, float* b, float* result, int alignment)
 {
+    std::cout << "Testing with alignment: " << alignment << " bytes" << std::endl;
     std::copy(data, data + N, a);
     std::copy(data + N, data + 2 * N, b);
     
+    std::cout << "Start" << std::endl;
     time(scalar_add, a, b, result, N);
     auto t = time(scalar_add, a, b, result, N);
     std::cout << std::format("Scalar addition ({:>2}b aligned): Time: {:>6}, Sum: {}\n", alignment, t, std::accumulate(result, result + N, 0.0f));
