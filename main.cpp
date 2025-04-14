@@ -90,21 +90,31 @@ int main(int argc, char* argv[]) {
 
     std::generate(data, data + 2 * N, [](){ return generateRandomNumber() - 50; });
 
+    std::cout << "Data generated." << std::endl;
+
     float* raw_a =      new float[total_bytes / sizeof(float)];
     float* raw_b =      new float[total_bytes / sizeof(float)];
     float* raw_result = new float[total_bytes / sizeof(float)];
+
+    std::cout << "Raw memory allocated." << std::endl;
 
     float* base_a = reinterpret_cast<float*>((reinterpret_cast<uintptr_t>(raw_a) + 31) & ~uintptr_t(31));
     float* base_b = reinterpret_cast<float*>((reinterpret_cast<uintptr_t>(raw_b) + 31) & ~uintptr_t(31));
     float* base_result = reinterpret_cast<float*>((reinterpret_cast<uintptr_t>(raw_result) + 31) & ~uintptr_t(31));
 
+    std::cout << "Base pointers calculated." << std::endl;
+
     float* misaligned_a = reinterpret_cast<float*>(reinterpret_cast<char*>(base_a) + misalign_bytes);
     float* misaligned_b = reinterpret_cast<float*>(reinterpret_cast<char*>(base_b) + misalign_bytes);
     float* misaligned_result = reinterpret_cast<float*>(reinterpret_cast<char*>(base_result) + misalign_bytes);
 
+    std::cout << "Misaligned pointers calculated." << std::endl;
+
     float* very_misalign_a = reinterpret_cast<float*>(reinterpret_cast<char*>(base_a) + very_misalign_bytes);
     float* very_misalign_b = reinterpret_cast<float*>(reinterpret_cast<char*>(base_b) + very_misalign_bytes);
     float* very_misalign_result = reinterpret_cast<float*>(reinterpret_cast<char*>(base_result) + very_misalign_bytes);
+
+    std::cout << "Very misaligned pointers calculated." << std::endl;
 
     test(data, N, very_misalign_a, very_misalign_b, very_misalign_result, very_misalign_bytes);
     test(data, N, misaligned_a, misaligned_b, misaligned_result, misalign_bytes);
