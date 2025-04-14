@@ -85,13 +85,13 @@ int main(int argc, char* argv[]) {
 
     // Allocate raw memory with padding for alignment + misalignment
     size_t total_bytes = N * sizeof(float) + 64;
-    float* data = reinterpret_cast<float*>(std::malloc(2 * N * sizeof(float)));
+    float* data = new float[2 * N];
 
     std::generate(data, data + 2 * N, [](){ return generateRandomNumber() - 50; });
 
-    void* raw_a = std::malloc(total_bytes);
-    void* raw_b = std::malloc(total_bytes);
-    void* raw_result = std::malloc(total_bytes);
+    float* raw_a =      new float[total_bytes / sizeof(float)];
+    float* raw_b =      new float[total_bytes / sizeof(float)];
+    float* raw_result = new float[total_bytes / sizeof(float)];
 
     float* base_a = reinterpret_cast<float*>((reinterpret_cast<uintptr_t>(raw_a) + 31) & ~uintptr_t(31));
     float* base_b = reinterpret_cast<float*>((reinterpret_cast<uintptr_t>(raw_b) + 31) & ~uintptr_t(31));
@@ -109,9 +109,9 @@ int main(int argc, char* argv[]) {
     test(data, N, misaligned_a, misaligned_b, misaligned_result, misalign_bytes);
     test(data, N, base_a, base_b, base_result, 32);
 
-    std::free(raw_a);
-    std::free(raw_b);
-    std::free(raw_result);
-    std::free(data);
+    delete [] raw_a;
+    delete [] raw_b;
+    delete [] raw_result;
+    delete [] data;
     return 0;
 }
