@@ -16,7 +16,6 @@ constexpr size_t misalign_bytes = 16;
 constexpr size_t very_misalign_bytes = 11;
 
 void scalar_add(const float* a, const float* b, float* result, size_t N) {
-    std::cout << "Scalar add" << std::endl;
     for (size_t i = 0; i < N; ++i) {
         result[i] = a[i] + b[i];
     }
@@ -24,7 +23,6 @@ void scalar_add(const float* a, const float* b, float* result, size_t N) {
 
 #if defined(__AVX__)
 void SIMD_add_aligned(const float* a, const float* b, float* result, size_t N) {
-    std::cout << "SIMD add aligned" << std::endl;
     for (size_t i = 0; i < N; i += 8) {
         __m256 va = _mm256_load_ps(a + i);
         __m256 vb = _mm256_load_ps(b + i);
@@ -34,7 +32,6 @@ void SIMD_add_aligned(const float* a, const float* b, float* result, size_t N) {
 }
 
 void SIMD_add_unaligned(const float* a, const float* b, float* result, size_t N) {
-    std::cout << "SIMD add unaligned" << std::endl;
     for (size_t i = 0; i < N; i += 8) {
         __m256 va = _mm256_loadu_ps(a + i);
         __m256 vb = _mm256_loadu_ps(b + i);
@@ -69,8 +66,8 @@ void test(const float* data, const int N, float* a, float* b, float* result, int
     auto t = time(scalar_add, a, b, result, N);
     std::cout << std::format("Scalar addition ({:>2}b aligned): Time: {:>6}, Sum: {}\n", alignment, t, std::accumulate(result, result + N, 0.0f));
 #if defined(__AVX__)
-    time(SIMD_add_aligned, a, b, result, N);
-    t = time(SIMD_add_aligned, a, b, result, N);
+    time(alignment == 32 ? SIMD_add_aligned : SIMD_add_unaligned, a, b, result, N);
+    t = time(alignment == 32 ? SIMD_add_aligned : SIMD_add_unaligned, a, b, result, N);
     std::cout << std::format("SIMD   addition ({:>2}b aligned): Time: {:>6}, Sum: {}\n", alignment, t, std::accumulate(result, result + N, 0.0f));
 #endif
 }
