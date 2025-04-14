@@ -57,11 +57,9 @@ std::chrono::milliseconds time(F func, Args&&... args) {
 
 void test(const float* data, const int N, float* a, float* b, float* result, int alignment)
 {
-    std::cout << "Testing with alignment: " << alignment << " bytes" << std::endl;
     std::copy(data, data + N, a);
     std::copy(data + N, data + 2 * N, b);
     
-    std::cout << "Start" << std::endl;
     time(scalar_add, a, b, result, N);
     auto t = time(scalar_add, a, b, result, N);
     std::cout << std::format("Scalar addition ({:>2}b aligned): Time: {:>6}, Sum: {}\n", alignment, t, std::accumulate(result, result + N, 0.0f));
@@ -84,9 +82,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    float* arr = new float[2]{0};
-    std::cout << *((float*)((char*)(arr) + 2)) << std::endl;
-    delete [] arr;
     std::cout << "Running with vector size: " << N << std::endl;
 
     // Allocate raw memory with padding for alignment + misalignment
@@ -95,31 +90,21 @@ int main(int argc, char* argv[]) {
 
     std::generate(data, data + 2 * N, [](){ return generateRandomNumber() - 50; });
 
-    std::cout << "Data generated." << std::endl;
-
     float* raw_a =      new float[total_bytes / sizeof(float)];
     float* raw_b =      new float[total_bytes / sizeof(float)];
     float* raw_result = new float[total_bytes / sizeof(float)];
-
-    std::cout << "Raw memory allocated." << std::endl;
 
     float* base_a = reinterpret_cast<float*>((reinterpret_cast<uintptr_t>(raw_a) + 31) & ~uintptr_t(31));
     float* base_b = reinterpret_cast<float*>((reinterpret_cast<uintptr_t>(raw_b) + 31) & ~uintptr_t(31));
     float* base_result = reinterpret_cast<float*>((reinterpret_cast<uintptr_t>(raw_result) + 31) & ~uintptr_t(31));
 
-    std::cout << "Base pointers calculated." << std::endl;
-
     float* misaligned_a = reinterpret_cast<float*>(reinterpret_cast<char*>(base_a) + misalign_bytes);
     float* misaligned_b = reinterpret_cast<float*>(reinterpret_cast<char*>(base_b) + misalign_bytes);
     float* misaligned_result = reinterpret_cast<float*>(reinterpret_cast<char*>(base_result) + misalign_bytes);
 
-    std::cout << "Misaligned pointers calculated." << std::endl;
-
     float* very_misalign_a = reinterpret_cast<float*>(reinterpret_cast<char*>(base_a) + very_misalign_bytes);
     float* very_misalign_b = reinterpret_cast<float*>(reinterpret_cast<char*>(base_b) + very_misalign_bytes);
     float* very_misalign_result = reinterpret_cast<float*>(reinterpret_cast<char*>(base_result) + very_misalign_bytes);
-
-    std::cout << "Very misaligned pointers calculated." << std::endl;
 
     test(data, N, base_a, base_b, base_result, 32);
     test(data, N, misaligned_a, misaligned_b, misaligned_result, misalign_bytes);
