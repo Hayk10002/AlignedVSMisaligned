@@ -82,8 +82,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    float arr[2] = {0.0f, 0.0f};
+    float* arr = new float[2]{0};
     std::cout << *((float*)((char*)(arr) + 2)) << std::endl;
+    delete [] arr;
     std::cout << "Running with vector size: " << N << std::endl;
 
     // Allocate raw memory with padding for alignment + misalignment
