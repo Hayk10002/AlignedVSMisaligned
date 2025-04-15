@@ -106,9 +106,9 @@ int main(int argc, char* argv[]) {
     float* very_misalign_b = reinterpret_cast<float*>(reinterpret_cast<char*>(base_b) + very_misalign_bytes);
     float* very_misalign_result = reinterpret_cast<float*>(reinterpret_cast<char*>(base_result) + very_misalign_bytes);
 
-    test(data, N, base_a, base_b, base_result, 32);
-    test(data, N, misaligned_a, misaligned_b, misaligned_result, misalign_bytes);
     test(data, N, very_misalign_a, very_misalign_b, very_misalign_result, very_misalign_bytes);
+    test(data, N, misaligned_a, misaligned_b, misaligned_result, misalign_bytes);
+    test(data, N, base_a, base_b, base_result, 32);
 
     delete [] raw_a;
     delete [] raw_b;
